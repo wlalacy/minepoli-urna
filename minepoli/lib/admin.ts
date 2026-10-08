@@ -1,0 +1,3 @@
+import crypto from 'crypto';
+export function token(){const p=Buffer.from(JSON.stringify({e:process.env.ADMIN_EMAIL,exp:Date.now()+8*60*60*1000})).toString('base64url');const s=crypto.createHmac('sha256',process.env.ADMIN_PASSWORD||'').update(p).digest('base64url');return p+'.'+s}
+export function valid(t?:string){if(!t)return false;const[a,s]=t.split('.');if(!a||!s)return false;const exp=JSON.parse(Buffer.from(a,'base64url').toString()).exp;const sig=crypto.createHmac('sha256',process.env.ADMIN_PASSWORD||'').update(a).digest('base64url');return exp>Date.now()&&crypto.timingSafeEqual(Buffer.from(s),Buffer.from(sig))}
